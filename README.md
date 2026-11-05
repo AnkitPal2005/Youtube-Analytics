@@ -1,70 +1,60 @@
-# YouTube Analytics Review & Next-Topic/Time Prediction Engine (`yt_analytics_advisor.py`)
+# Reality Shift — YouTube Analytics Advisor (`yt_analytics_advisor.py`)
 
-Specialized automated YouTube analytics advisor engineered for the channel **"Reality Shift"** (high-impact Hindi/Hinglish explainer shorts covering Geopolitics, Indigenous Defense & Tech, Consumer Manipulation, and High-Impact Tech).
+Reads the channel's **real** numbers and turns them into signals for the next Short: which pillar, title style,
+length and upload slot are working. Nothing is estimated or invented — a number that isn't available shows as `--`.
 
----
+## What it shows
 
-## 🚀 Key Capabilities
+| Section | Source | Needs |
+|---|---|---|
+| Views, likes, upload time (IST), length, multiplier vs median | YouTube Data API v3 | API key (`.env`) |
+| Live views/hour since the last run | `snapshots.jsonl` (saved every run) | run it twice, 10+ min apart |
+| Pillars, Hinglish vs English titles, length, upload slot | the above, grouped (groups under 3 Shorts are marked *weak*) | API key |
+| Average % viewed, avg view duration, subs gained per Short | YouTube Analytics API | one-time `--auth` |
+| Shorts views in the last 90 days, long-form watch hours (365 d), daily views | YouTube Analytics API | one-time `--auth` |
 
-1. **Initial Velocity Correlation & Predictive Upload Window:**
-   - Evaluates initial 30–60 minute view velocities grouped across hour-of-day slots.
-   - Computes day-of-week context (weekday commute surges vs. weekend leisure browsing) to predict the single optimal 60-minute upload window.
-2. **Pillar Resonance & Outlier Benchmark:**
-   - Categorizes past Shorts into the 4 channel core pillars:
-     - *Indigenous Defense & Tech* (e.g., S-400 vs Kusha, BrahMos, Pinaka, Tejas)
-     - *Geopolitics & Strategic Diplomacy* (e.g., Chabahar Port, CPEC, Malacca Choke)
-     - *Consumer Manipulation / Business Case Studies* (e.g., Meesho, Movie Popcorn Scam, Dark Stores)
-     - *High-Impact Tech* (e.g., UPI Hegemony, Dead Internet Theory, AI Deepfake Scams)
-   - Computes channel median views and benchmarks performance multipliers (`1.5x`, `2.5x+` viral outliers).
-   - Generates an audience affinity score (0–100) per pillar.
-3. **Retention & Swipe-Leak Detection:**
-   - Flags viral hook lock-in (`Stayed Watch % >= 70%`) vs. critical drop-off points (`Stayed Watch % < 50%`).
-   - Analyzes Average Percentage Viewed (APV %) to maximize Shorts feed algorithmic distribution.
-4. **Predictive Next-Topic & High-Retention Script Generation:**
-   - Recommends the Top 2 highest-probability topics from top-performing pillars.
-   - Provides a **32-second high-retention hook in authentic Devanagari phonetics** pre-tuned for Microsoft Edge-TTS voice `hi-IN-MadhurNeural`.
-   - Generates exact **UI Safe Zone Coordinates** (`Y: 1150px - 1250px`, centered) to avoid UI overlap from Shorts overlays.
-5. **YPP Compliance & Repetitive Content Guard:**
-   - Validates metadata hygiene (strictly 3–4 hashtags; protects against keyword stuffing).
-   - Enforces a repetitive content guard against the last 2 uploads to avoid algorithmic cannibalization.
+"Stayed to watch vs swiped away" is not available in any public API — read it in Studio → Content → the Short.
+Analytics API numbers lag 2-3 days behind the live view counts.
 
----
+Every live run also writes **`advisor_report.json`** (machine-readable; the Short-making pipeline reads it).
 
-## 🛠️ Usage & CLI Commands
+## Run
 
-### 1. Run in Mock Demo Mode
 ```bash
-python yt_analytics_advisor.py --mock
+python yt_analytics_advisor.py            # live channel (or double-click start_advisor.bat)
+python yt_analytics_advisor.py --mock     # demo layout with made-up sample data (NOT your channel)
+python yt_analytics_advisor.py --data export.csv   # analyze an exported file
 ```
 
-### 2. Run with Local Storage (Default Fallback)
-Automatically searches for `analytics_data.json` or `studio_export.csv` in the current folder:
-```bash
-python yt_analytics_advisor.py
-```
+`.env` needs `YOUTUBE_API_KEY` (and `YOUTUBE_CHANNEL_ID`), see `.env.example`.
+If the API fails, the script stops and says why — it never falls back to sample data.
 
-### 3. Run with Custom JSON / CSV Data Export
-```bash
-python yt_analytics_advisor.py --data studio_export.csv
-```
+## One-time Analytics setup (free, ~5 minutes)
 
-### 4. Run with Live YouTube Data API v3
-Set your Google Cloud YouTube Data API v3 key as an environment variable or pass via flag:
-```bash
-# Via environment variable
-set YOUTUBE_API_KEY=your_api_key_here
-python yt_analytics_advisor.py
+1. Google Cloud Console → same project as your API key → **APIs & Services → Library** → enable
+   **YouTube Analytics API** (YouTube Data API v3 is already on).
+2. **APIs & Services → OAuth consent screen** → User type **External** → app name "Reality Shift Advisor",
+   your email → Save. Under **Audience / Test users** add the Google account that owns the channel.
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID** → Application type
+   **Desktop app** → Create → **Download JSON** → save it in this folder as **`client_secret.json`**.
+4. Run `python yt_analytics_advisor.py --auth` → a browser opens → pick the channel's account →
+   "Google hasn't verified this app" → **Continue** (it's your own app) → **Allow**.
+   The login is saved to `token.json`; normal runs use it automatically.
 
-# Or via CLI flag
-python yt_analytics_advisor.py --api-key YOUR_API_KEY --channel-id YOUR_CHANNEL_ID
-```
-*(If the API key is absent or quota is exceeded, the engine gracefully falls back to local export data without crashing).*
+While the consent screen is in **Testing**, Google expires the login after 7 days — the script then says so and you
+run `--auth` again. To stop that, click **Publish app** on the consent screen (fine for personal use; you'll still
+see the "unverified" warning once).
 
----
+`client_secret.json`, `token.json`, `snapshots.jsonl` and `advisor_report.json` are in `.gitignore` — never share them.
 
-## 📦 Installed Dependencies
-- `pandas`: Vectorized statistical aggregation, median calculations, and datetime grouping.
-- `tabulate`: Formatted ASCII grid dashboards.
-- `colorama`: Cross-platform ANSI terminal coloring.
-- `google-api-python-client`: YouTube Data API v3 client.
+## YPP runway
 
+Current bar: 1,000 subscribers + **10M public Shorts views in the last 90 days** (a rolling window, i.e. about
+111K views/day sustained) **or** 4,000 long-form watch hours in 365 days. The bar for new applicants changes on
+2027-02-01 — verify on YouTube's help page.
+
+## Files
+
+- `yt_analytics_advisor.py` — the advisor
+- `video_inspector.py` — pre-upload check of a rendered mp4
+- `analytics_data.json`, `studio_export.csv` — **sample data for `--mock` only**, not the channel

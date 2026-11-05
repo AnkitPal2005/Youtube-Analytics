@@ -18,3 +18,9 @@ __pycache__/
 *.jpeg
 *.png
 scratch/
+
+# Google login + live channel data (private)
+client_secret*.json
+token.json
+snapshots.jsonl
+advisor_report.json

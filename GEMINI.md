@@ -27,19 +27,23 @@ Whenever the user asks:
    ```powershell
    python yt_analytics_advisor.py
    ```
-   Inspect the output: channel median views, pillar affinity ranking, velocity heatmap, swipe-away rate (<50% leaks vs >70% viral locks), and recommended topics.
+   Inspect the output (or `advisor_report.json`): median views and multipliers, pillar / title-style / length / upload-slot groups, live views per hour, average % viewed (only if Studio metrics are connected), and the YPP runway.
+   **Data honesty rules:**
+   - Quote only numbers the report actually contains. A metric shown as `--` is unavailable: say "not connected", never estimate it.
+   - Groups marked *weak* (fewer than 3 Shorts) are hints, not conclusions — say so.
+   - "Stayed to watch vs swiped away" is not in the API; ask the user to read it in Studio if needed.
+   - The report has no topic list. Pick topics from the signals, and verify every fact, number and claim with a source before it goes into a title or script. No invented figures, no "secret / cancelled / exposed" claims that aren't literally true (YPP misleading-metadata policy).
 
 2. **Step 2: Deliver the 20-Year Veteran Daily Growth Briefing**
    Structure your chat response into these exact sections:
 
    ### 📊 1. Algorithmic Audit (What's Working vs What Flopped)
-   - Critique recent performance using cold hard metrics: Median Multiplier (e.g., `1.35x` vs `0.45x`), Stayed Watch % (Viewed vs Swiped Away), and APV %.
-   - Point out any **Swipe Leaks (< 50% Stayed)**: Explain the psychological hook flaw (e.g., "Intro me sawal puchna band karo, 1.5 second me direct conflict dikhao").
-   - Highlight the **Winning Pillar**: Identify which core pillar has the highest velocity and audience affinity right now.
+   - Critique recent performance using the report's real metrics: Median Multiplier (e.g., `1.35x` vs `0.45x`), live views/hour, and average % viewed when connected.
+   - Point out the weakest Shorts and the likely hook/title flaw (e.g., "Intro me sawal puchna band karo, 1.5 second me direct conflict dikhao") — framed as a hypothesis when the sample is small.
+   - Highlight the **Winning Pillar** and title style by median views, with the sample size.
 
-   ### ⏰ 2. Today's Optimal Upload Window
-   - State the **Primary Upload Window** for today (accounting for weekday vs. weekend scrolling patterns).
-   - Explain the algorithmic rationale (e.g., evening commute vs. afternoon relax surge).
+   ### ⏰ 2. Upload Slot
+   - Use the report's upload-slot table. If no slot has 3+ Shorts, say there isn't enough data yet and keep the fixed schedule.
 
    ### 🎯 3. Today's #1 Viral Topic Selection
    - **Pillar & Topic Title**: Punchy, curiosity-inducing packaging.
@@ -49,8 +53,8 @@ Whenever the user asks:
    - Provide the complete, word-for-word spoken script (~115-125 words, ~2.7 words/sec) written in **authentic Devanagari phonetics** with natural punctuation for breathing pauses and voice inflection.
    - High-retention 45-second narrative structure:
      * *Seconds 0-3*: Immediate high-stakes conflict / question hook.
-     * *Seconds 4-18*: The geopolitical reality & Russian delivery bottleneck.
-     * *Seconds 19-35*: DRDO's secret tech weapon, 350km range, and anti-stealth capability.
+     * *Seconds 4-18*: The verified core facts (each number with a source).
+     * *Seconds 19-35*: The payoff / most surprising verified fact.
      * *Seconds 36-45*: High-engagement comment trigger & seamless infinite loop bridge.
 
    ### 📱 5. UI Safe Zone & Metadata Packaging
@@ -65,12 +69,8 @@ Whenever the user asks:
      ```
 
    ### ⏳ 7. Daily YPP Monetization Countdown & Pace Reality Check
-   - State the current progress towards **10,000,000 views** (Target Date: **31 Jan 2027**).
-   - Show:
-     * Days remaining until the deadline.
-     * Current daily pace vs. Required daily pace.
-     * Pace deficit multiplier (e.g. "We need 120x faster pace").
-     * Breakout requirement roadmap (how many 500k-1M+ breakout videos are mathematically required).
+   - YPP needs **10,000,000 public Shorts views inside a rolling 90-day window** (~111K views/day sustained) or 4,000 long-form watch hours in 365 days, plus 1,000 subs. Target date: **31 Jan 2027**.
+   - Show, from the report only: days left, Shorts views in the last 90 days, watch hours, current daily pace vs 111K/day, and the gap multiplier. If a number is `--`, say it needs `--auth` instead of guessing.
 
 ---
 
@@ -101,5 +101,18 @@ Whenever the user pastes:
    - 🎵 **Copyright & Audio Safety:** Royalty-free or procedural synth SFX; zero copyrighted commercial music clips.
    - 🚫 **Spam & External CTA Guard:** No "link in bio", "DM for secret", or deceptive marketing hooks.
    - 🤖 **Altered / Synthetic Content Protocol:** Advise if YouTube's "Altered or Synthetic Content" checkbox is required in Studio.
+
+---
+
+## 📈 Channel Cadence & Scaling Protocol (2 Shorts/Day Roadmap)
+- **Current Phase (Phase 1 - Quality Lock):** 1 Short/day to cement retention above 70% and prevent cannibalization.
+- **Scaling Trigger (Phase 2 - 2x Scale):** Transition to **2 Shorts/day** starting **Monday, 9 Nov 2026** (or once a 3-video bank is ready).
+- **Anti-Cannibalization Rule (Strict):** Never upload 2 Shorts within 5 hours of each other.
+  * **Slot 1 (Lunch Peak):** `12:30 PM – 1:00 PM IST`
+  * **Slot 2 (Evening Prime):** `6:30 PM – 7:30 PM IST`
+- **Active Video Bank:**
+  1. *Today (Scheduled):* `S-400 vs Project Kusha`
+  2. *Next Up (Ready to record):* `Zorawar Light Tank: China Killer?` (45s DRDO high-altitude Ladakh script)
+
 
 
