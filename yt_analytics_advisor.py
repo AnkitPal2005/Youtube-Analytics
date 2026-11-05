@@ -370,7 +370,9 @@ def analyze(data: Dict[str, Any], private: Optional[Dict[str, Any]], now: dateti
         report["best_retention"] = [{"title": clean_title(v["title"]), "apv_percent": v["apv_percent"]}
                                     for v in sorted(with_apv, key=lambda v: v["apv_percent"], reverse=True)[:3]]
         report["worst_retention"] = [{"title": clean_title(v["title"]), "apv_percent": v["apv_percent"]}
-                                     for v in sorted(with_apv, key=lambda v: v["apv_percent"])[:2]]
+                                     for v in sorted(with_apv, key=lambda v: v["apv_percent"])[:2]
+                                     if v["video_id"] not in {b["video_id"] for b in
+                                                              sorted(with_apv, key=lambda v: -v["apv_percent"])[:3]}]
     report["runway"] = runway(data, private, shorts, now)
     return report
 
@@ -583,6 +585,16 @@ def main() -> None:
 
     creds = credentials(interactive=args.auth)
     private = None
+    if creds:   # Analytics only reports the channel the Google login belongs to: never mix two channels
+        from googleapiclient.discovery import build
+        mine = build("youtube", "v3", credentials=creds, cache_discovery=False).channels().list(
+            part="id,snippet", mine=True).execute().get("items", [])
+        mine_id = mine[0]["id"] if mine else None
+        if mine_id != data["channel_id"]:
+            name = mine[0]["snippet"]["title"] if mine else "unknown"
+            print(f"{Fore.YELLOW}[!] Google login is for '{name}' ({mine_id}), not this channel - Studio metrics "
+                  f"skipped. To add this channel, log in with its account: --auth (replaces token.json).")
+            creds = None
     if creds:
         private = fetch_private(creds, [v["video_id"] for v in data["videos"]])
         for err in private["errors"]:
